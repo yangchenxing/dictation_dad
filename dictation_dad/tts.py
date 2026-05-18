@@ -65,3 +65,7 @@ async def generate_audios(texts: list[str], progress_callback=None) -> None:
 
 def get_audio_url(text: str) -> str:
     return f"file://{os.path.abspath(_get_cache_path(text))}"
+
+
+def get_audio_path(text: str) -> str:
+    return os.path.abspath(_get_cache_path(text))

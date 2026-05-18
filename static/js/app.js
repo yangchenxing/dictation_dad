@@ -379,6 +379,14 @@ const App = {
         document.querySelectorAll(".dictation-stage").forEach(el => el.classList.add("hidden"));
         document.getElementById("play-stage").classList.remove("hidden");
 
+        // Initialize AudioContext on user gesture to avoid suspension
+        if (!this.state.audioContext && (window.AudioContext || window.webkitAudioContext)) {
+            this.state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.state.audioContext && this.state.audioContext.state === "suspended") {
+            await this.state.audioContext.resume();
+        }
+
         let entries = [...this.state.entries];
         if (shuffle) {
             entries.sort(() => Math.random() - 0.5);
@@ -402,7 +410,7 @@ const App = {
 
         const count = this.state.playParams.play_count;
         for (let i = 0; i < count; i++) {
-            await this.playAudio(entry.audio_url);
+            await this.playAudio(entry);
             if (i < count - 1) {
                 await this.sleep(2000);
             }
@@ -416,17 +424,40 @@ const App = {
         await this.playCurrent();
     },
 
-    playAudio(url) {
-        return new Promise((resolve) => {
+    playAudio(entry) {
+        return new Promise(async (resolve) => {
+            const res = await this.callApi("get_audio_base64", entry.speech);
+            if (!res.success) {
+                console.error("Failed to load audio:", res.error);
+                resolve();
+                return;
+            }
+            const blob = this.base64ToBlob(res.data, "audio/mpeg");
+            const url = URL.createObjectURL(blob);
             this.currentAudio = new Audio(url);
             this.currentAudioDuration = 0;
             this.currentAudio.addEventListener("loadedmetadata", () => {
                 this.currentAudioDuration = this.currentAudio.duration || 0;
             });
-            this.currentAudio.addEventListener("ended", resolve);
-            this.currentAudio.addEventListener("error", resolve);
+            this.currentAudio.addEventListener("ended", () => {
+                URL.revokeObjectURL(url);
+                resolve();
+            });
+            this.currentAudio.addEventListener("error", () => {
+                URL.revokeObjectURL(url);
+                resolve();
+            });
             this.currentAudio.play().catch(resolve);
         });
+    },
+
+    base64ToBlob(base64, mime) {
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        return new Blob([bytes], { type: mime });
     },
 
     sleep(ms) {
@@ -450,7 +481,13 @@ const App = {
 
     async beep() {
         if (!window.AudioContext && !window.webkitAudioContext) return;
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (!this.state.audioContext) {
+            this.state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const ctx = this.state.audioContext;
+        if (ctx.state === "suspended") {
+            await ctx.resume();
+        }
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.connect(gain);
@@ -460,7 +497,6 @@ const App = {
         osc.start();
         await this.sleep(100);
         osc.stop();
-        ctx.close();
     },
 
     showFinish() {
