@@ -1,0 +1,413 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 全局导航 */
+.global-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(min(5vh, 5vw) + 16px);
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    z-index: 100;
+}
+
+.nav-btn {
+    width: min(5vh, 5vw);
+    height: min(5vh, 5vw);
+    font-size: calc(min(5vh, 5vw) * 0.5);
+    border: none;
+    background: #eee;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.nav-btn:hover {
+    background: #ddd;
+}
+
+.breadcrumb {
+    flex: 1;
+    margin: 0 12px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.breadcrumb span {
+    cursor: pointer;
+    color: #1976d2;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.breadcrumb span:hover {
+    background: #e3f2fd;
+}
+
+.breadcrumb .sep {
+    color: #999;
+    cursor: default;
+}
+
+.breadcrumb .sep:hover {
+    background: transparent;
+}
+
+.settings-btn {
+    margin-left: auto;
+}
+
+.home-settings {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 90;
+}
+
+/* 首页 */
+.page {
+    width: 100%;
+    height: 100%;
+    padding-top: calc(min(5vh, 5vw) + 16px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.home-breadcrumb {
+    margin: 16px 0;
+    justify-content: center;
+}
+
+.file-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.file-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 140px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 8px;
+}
+
+.file-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.file-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+}
+
+.file-name {
+    font-size: 14px;
+    text-align: center;
+    word-break: break-all;
+    color: #333;
+}
+
+.add-item {
+    border: 2px dashed #ccc;
+    background: #fafafa;
+}
+
+.add-item:hover {
+    border-color: #1976d2;
+    color: #1976d2;
+    background: #fff;
+}
+
+/* 模态框 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    min-width: 400px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.preview-content {
+    min-width: 600px;
+    width: 80vw;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #eee;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background: #ddd;
+}
+
+.btn-green {
+    background: #4caf50;
+    color: #fff;
+}
+
+.btn-green:hover {
+    background: #43a047;
+}
+
+.btn-red {
+    background: #f44336;
+    color: #fff;
+}
+
+.btn-red:hover {
+    background: #e53935;
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+input[type="text"], input[type="number"] {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+}
+
+input[type="file"] {
+    padding: 8px 0;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.setting-item label {
+    white-space: nowrap;
+}
+
+.setting-item input {
+    width: 120px;
+}
+
+/* 听写界面 */
+.dictation-stage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 准备 */
+#prepare-stage {
+    gap: 24px;
+}
+
+#prepare-stage h2 {
+    font-size: 32px;
+}
+
+#prepare-message {
+    font-size: 24px;
+    text-align: center;
+}
+
+.progress-bar {
+    width: 50vw;
+    height: 24px;
+    background: #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#progress-fill {
+    height: 100%;
+    background: #4caf50;
+    width: 0%;
+    transition: width 0.3s;
+}
+
+#progress-text {
+    margin-top: 12px;
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+}
+
+/* 等待 */
+#wait-stage {
+    background: #333;
+    cursor: pointer;
+}
+
+.wait-half {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: min(10vh, 10vw);
+    color: #fff;
+    transition: all 0.3s;
+}
+
+.wait-half:hover {
+    background: #607d8b;
+    color: #ffeb3b;
+}
+
+/* 听写中 */
+#play-stage {
+    background: #1a237e;
+    color: #fff;
+    gap: 24px;
+}
+
+.play-progress {
+    font-size: min(15vh, 15vw);
+    font-weight: bold;
+}
+
+.play-timer {
+    font-size: min(10vh, 10vw);
+}
+
+/* 结束 */
+#finish-stage {
+    background: #4caf50;
+    color: #fff;
+    font-size: min(15vh, 15vw);
+    cursor: pointer;
+}
+
+/* 回顾 */
+#review-stage {
+    background: #0d47a1;
+    padding: 0.5vh 0.5vw;
+    overflow-y: auto;
+    justify-content: flex-start;
+}
+
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    width: 100%;
+    padding: 0.5vh 0.5vw;
+}
+
+.review-item {
+    background: #1976d2;
+    border-radius: 8px;
+    padding: 0.5vh 0.5vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    word-break: break-all;
+}
+
+.review-answer {
+    color: #fff;
+    font-size: min(5vw, 11vh);
+    text-align: center;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.review-hint {
+    color: rgba(255,255,255,0.6);
+    font-size: min(2vw, 5vh);
+    text-align: center;
+    margin-top: 4px;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}

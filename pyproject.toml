@@ -1,0 +1,26 @@
+[project]
+name = "dictation-dad"
+version = "0.1.0"
+description = "爸爸虽然不在家，但是依然给你们准备了听写作业"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pywebview>=5.0",
+    "edge-tts>=6.1",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=7.1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

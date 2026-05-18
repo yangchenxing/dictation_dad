@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictation Dad</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://unpkg.com/tabulator-tables@6.0/dist/css/tabulator.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 全局导航 -->
+    <div id="global-nav" class="global-nav hidden">
+        <button id="back-btn" class="nav-btn">↩️</button>
+        <div id="breadcrumb" class="breadcrumb"></div>
+        <button id="settings-btn" class="nav-btn settings-btn">⚙️</button>
+    </div>
+
+    <!-- 首页 -->
+    <div id="home-page" class="page">
+        <button id="home-settings-btn" class="nav-btn settings-btn home-settings">⚙️</button>
+        <div id="home-breadcrumb" class="breadcrumb home-breadcrumb"></div>
+        <div id="file-list" class="file-list"></div>
+    </div>
+
+    <!-- 预览浮层 -->
+    <div id="preview-modal" class="modal hidden">
+        <div class="modal-content preview-content">
+            <div class="preview-header">
+                <span id="preview-title"></span>
+                <div class="preview-actions">
+                    <button id="start-dictation-btn" class="btn btn-green">开始听写</button>
+                    <button id="delete-file-btn" class="btn btn-red">删除文件</button>
+                </div>
+            </div>
+            <div id="preview-table"></div>
+            <button id="preview-close" class="btn">关闭</button>
+        </div>
+    </div>
+
+    <!-- 创建/上传模态框 -->
+    <div id="add-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="add-modal-title">选择操作</h3>
+            <div id="add-options">
+                <button id="create-dir-option" class="btn">创建目录</button>
+                <button id="upload-file-option" class="btn">上传CSV</button>
+            </div>
+            <div id="create-dir-form" class="hidden">
+                <input type="text" id="dir-name-input" placeholder="目录名">
+                <div class="form-actions">
+                    <button id="create-dir-confirm" class="btn btn-green">确认</button>
+                    <button id="create-dir-cancel" class="btn">取消</button>
+                </div>
+            </div>
+            <div id="upload-file-form" class="hidden">
+                <input type="file" id="file-input" accept=".csv">
+                <div class="form-actions">
+                    <button id="upload-file-confirm" class="btn btn-green">确认</button>
+                    <button id="upload-file-cancel" class="btn">取消</button>
+                </div>
+            </div>
+            <button id="add-modal-close" class="btn">关闭</button>
+        </div>
+    </div>
+
+    <!-- 听写界面 -->
+    <div id="dictation-page" class="page hidden">
+        <!-- 准备 -->
+        <div id="prepare-stage" class="dictation-stage hidden">
+            <h2>准备听写</h2>
+            <p id="prepare-message"></p>
+            <div id="prepare-actions" class="hidden">
+                <button id="prepare-confirm" class="btn btn-green">确认生成</button>
+                <button id="prepare-cancel" class="btn">取消</button>
+            </div>
+            <div id="progress-container" class="hidden">
+                <div class="progress-bar"><div id="progress-fill"></div></div>
+                <p id="progress-text"></p>
+            </div>
+        </div>
+
+        <!-- 等待 -->
+        <div id="wait-stage" class="dictation-stage hidden">
+            <div id="wait-sequential" class="wait-half">
+                <span>顺序</span>
+            </div>
+            <div id="wait-random" class="wait-half">
+                <span>乱序</span>
+            </div>
+        </div>
+
+        <!-- 听写中 -->
+        <div id="play-stage" class="dictation-stage hidden">
+            <div id="play-progress" class="play-progress">0/0</div>
+            <div id="play-timer" class="play-timer">-</div>
+        </div>
+
+        <!-- 结束 -->
+        <div id="finish-stage" class="dictation-stage hidden">
+            <span>结束</span>
+        </div>
+
+        <!-- 回顾 -->
+        <div id="review-stage" class="dictation-stage hidden">
+            <div id="review-grid" class="review-grid"></div>
+        </div>
+    </div>
+
+    <!-- 设置浮窗 -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>设置</h3>
+            <div class="setting-item">
+                <label>音频时长系数</label>
+                <input type="number" id="setting-duration" step="0.1">
+            </div>
+            <div class="setting-item">
+                <label>额外等待时间（秒）</label>
+                <input type="number" id="setting-extra" step="0.5">
+            </div>
+            <div class="setting-item">
+                <label>最短等待时间（秒）</label>
+                <input type="number" id="setting-min" step="0.5">
+            </div>
+            <div class="setting-item">
+                <label>倒计时提示音次数</label>
+                <input type="number" id="setting-beep" step="1" min="0">
+            </div>
+            <div class="form-actions">
+                <button id="settings-save" class="btn btn-green">保存</button>
+                <button id="settings-cancel" class="btn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/tabulator-tables@6.0/dist/js/tabulator.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
