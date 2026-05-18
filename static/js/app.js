@@ -12,10 +12,10 @@ const App = {
         audioContext: null,
     },
 
-    init() {
+    async init() {
         this.bindEvents();
-        this.loadSettings();
-        this.showHome();
+        await this.loadSettings();
+        await this.showHome();
     },
 
     bindEvents() {
@@ -50,7 +50,15 @@ const App = {
 
     async callApi(method, ...args) {
         if (window.pywebview && window.pywebview.api && typeof window.pywebview.api[method] === "function") {
-            return await window.pywebview.api[method](...args);
+            const timeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("API 调用超时")), 10000)
+            );
+            try {
+                return await Promise.race([window.pywebview.api[method](...args), timeout]);
+            } catch (e) {
+                console.error("API call failed:", method, e);
+                return { success: false, error: e.message || "API 调用失败" };
+            }
         }
         console.warn("pywebview API not ready, method:", method, args);
         return { success: false, error: "pywebview API 尚未就绪" };
@@ -71,9 +79,15 @@ const App = {
     },
 
     async loadDirectory(path) {
-        const res = await this.callApi("list_directory", path);
+        let res;
+        for (let attempt = 0; attempt < 3; attempt++) {
+            res = await this.callApi("list_directory", path);
+            if (res.success) break;
+            // Wait before retry, giving pywebview bridge time to stabilize
+            await this.sleep(300);
+        }
         if (!res.success) {
-            alert("加载目录失败: " + res.error);
+            this.renderFileListError("加载目录失败: " + res.error);
             return;
         }
         this.renderBreadcrumb(path);
@@ -140,6 +154,16 @@ const App = {
         addItem.innerHTML = `<div class="file-icon" style="font-size:36px;">+</div><div class="file-name">新增</div>`;
         addItem.addEventListener("click", () => this.openAddModal());
         container.appendChild(addItem);
+    },
+
+    renderFileListError(message) {
+        const container = document.getElementById("file-list");
+        container.innerHTML = "";
+        const errorDiv = document.createElement("div");
+        errorDiv.style.cssText = "padding:24px;text-align:center;color:#c62828;";
+        errorDiv.innerHTML = `<p>${message}</p><button class="btn" style="margin-top:12px;">重试</button>`;
+        errorDiv.querySelector("button").addEventListener("click", () => this.loadDirectory(this.state.currentPath));
+        container.appendChild(errorDiv);
     },
 
     // 预览
@@ -627,7 +651,8 @@ const App = {
 };
 
 function startApp() {
-    App.init();
+    // Small delay to let pywebview's Python-side message handler fully initialize
+    setTimeout(() => App.init(), 50);
 }
 
 function isApiReady() {
